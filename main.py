@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from bleak import discover
 from asyncio import new_event_loop, set_event_loop, get_event_loop
-from time import sleep, time_ns
+from time import sleep
 from binascii import hexlify
 from json import dumps
 from sys import argv
@@ -20,6 +20,15 @@ recent_beacons = []
 
 
 def get_best_result(device):
+    try:
+        from time import time_ns
+    except ImportError:
+        from datetime import datetime
+
+        def time_ns():
+            now = datetime.now()
+            return int(now.timestamp() * 1e9)
+        
     recent_beacons.append({
         "time": time_ns(),
         "device": device
