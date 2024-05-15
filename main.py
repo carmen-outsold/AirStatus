@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from bleak import discover
 from asyncio import new_event_loop, set_event_loop, get_event_loop
 from time import sleep, time_ns
@@ -5,6 +6,8 @@ from binascii import hexlify
 from json import dumps
 from sys import argv
 from datetime import datetime
+import sys
+import asyncio
 
 # Configure update duration (update after n seconds)
 UPDATE_DURATION = 1
@@ -54,11 +57,14 @@ async def get_device():
 
 # Same as get_device() but it's standalone method instead of async
 def get_data_hex():
-    new_loop = new_event_loop()
-    set_event_loop(new_loop)
-    loop = get_event_loop()
-    a = loop.run_until_complete(get_device())
-    loop.close()
+    if sys.version_info < (3, 7):
+        new_loop = new_event_loop()
+        set_event_loop(new_loop)
+        loop = get_event_loop()
+        a = loop.run_until_complete(get_device())
+        loop.close()
+    else: 
+        a = asyncio.run(get_device())
     return a
 
 
@@ -130,19 +136,22 @@ def is_flipped(raw):
 def run():
     output_file = argv[-1]
 
-    while True:
-        data = get_data()
+    try:
+        while True:
+            data = get_data()
 
-        if data["status"] == 1:
-            json_data = dumps(data)
-            if len(argv) > 1:
-                f = open(output_file, "a")
-                f.write(json_data+"\n")
-                f.close()
-            else:
-                print(json_data)
+            if data["status"] == 1:
+                json_data = dumps(data)
+                if len(argv) > 1:
+                    f = open(output_file, "a")
+                    f.write(json_data+"\n")
+                    f.close()
+                else:
+                    print(json_data)
 
-        sleep(UPDATE_DURATION)
+            sleep(UPDATE_DURATION)
+    except KeyboardInterrupt:
+        pass
 
 
 if __name__ == '__main__':
