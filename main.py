@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from bleak import discover
+from bleak import BleakScanner
 from asyncio import new_event_loop, set_event_loop, get_event_loop
 from time import sleep
 from binascii import hexlify
@@ -19,7 +19,7 @@ RECENT_BEACONS_MAX_T_NS = 10000000000  # 10 Seconds
 recent_beacons = []
 
 
-def get_best_result(device):
+def get_best_result(device, adv_data):
     try:
         from time import time_ns
     except ImportError:
@@ -28,37 +28,39 @@ def get_best_result(device):
         def time_ns():
             now = datetime.now()
             return int(now.timestamp() * 1e9)
-        
-    recent_beacons.append({
+
+    current_beacon = {
         "time": time_ns(),
-        "device": device
-    })
+        "device": device,
+        "adv_data": adv_data
+    }
+    recent_beacons.append(current_beacon)
     strongest_beacon = None
     i = 0
     while i < len(recent_beacons):
         if(time_ns() - recent_beacons[i]["time"] > RECENT_BEACONS_MAX_T_NS):
             recent_beacons.pop(i)
             continue
-        if (strongest_beacon == None or strongest_beacon.rssi < recent_beacons[i]["device"].rssi):
-            strongest_beacon = recent_beacons[i]["device"]
+        if (strongest_beacon == None or strongest_beacon["adv_data"].rssi < recent_beacons[i]["adv_data"].rssi):
+            strongest_beacon = recent_beacons[i]
         i += 1
 
-    if (strongest_beacon != None and strongest_beacon.address == device.address):
-        strongest_beacon = device
+    if (strongest_beacon != None and strongest_beacon["device"].address == device.address):
+        strongest_beacon = current_beacon
 
-    return strongest_beacon
+    return strongest_beacon["adv_data"]
 
 
 # Getting data with hex format
 async def get_device():
     # Scanning for devices
-    devices = await discover()
-    for d in devices:
+    discovered_devices_and_advertisement_data = await BleakScanner.discover(return_adv=True)
+    for device, adv_data in discovered_devices_and_advertisement_data.values():
         # Checking for AirPods
-        d = get_best_result(d)
-        if d.rssi >= MIN_RSSI and AIRPODS_MANUFACTURER in d.metadata['manufacturer_data']:
-            data_hex = hexlify(bytearray(d.metadata['manufacturer_data'][AIRPODS_MANUFACTURER]))
-            data_length = len(hexlify(bytearray(d.metadata['manufacturer_data'][AIRPODS_MANUFACTURER])))
+        adv_data = get_best_result(device, adv_data)
+        if adv_data.rssi >= MIN_RSSI and AIRPODS_MANUFACTURER in adv_data.manufacturer_data:
+            data_hex = hexlify(bytearray(adv_data.manufacturer_data[AIRPODS_MANUFACTURER]))
+            data_length = len(hexlify(bytearray(adv_data.manufacturer_data[AIRPODS_MANUFACTURER])))
             if data_length == AIRPODS_DATA_LENGTH:
                 return data_hex
     return False
