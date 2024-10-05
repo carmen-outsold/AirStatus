@@ -67,15 +67,8 @@ async def get_device():
 
 
 # Same as get_device() but it's standalone method instead of async
-def get_data_hex():
-    if sys.version_info < (3, 7):
-        new_loop = new_event_loop()
-        set_event_loop(new_loop)
-        loop = get_event_loop()
-        a = loop.run_until_complete(get_device())
-        loop.close()
-    else: 
-        a = asyncio.run(get_device())
+def get_data_hex() -> Optional[bytes]:
+    a = asyncio.run(get_device())
     return a
 
 

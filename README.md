@@ -2,15 +2,16 @@
 #### Check your AirPods battery level on Linux
 
 #### What is it?
-This is a Python 3.6 script, forked from [faglo/AirStatus](https://github.com/faglo/AirStatus) that allows you to check AirPods battery level from your terminal, as JSON output.
+This is a Python script, forked from [faglo/AirStatus](https://github.com/faglo/AirStatus) that reads your airpods' battery levels and writes into a JSON file.
 
 ### Usage
+Make sure you have python 3.12 and bleak 0.22.3 installed.
 
 ```
-python3 main.py [output_file]
+python3 main.py
 ```
 
-Output will be stored in `output_file` if specified.
+Output will be stored in `out.json` located at `$HOME/.var/airstatus`.
 
 #### Example output
 
@@ -23,10 +24,10 @@ Output will be stored in `output_file` if specified.
 Create the file `/etc/systemd/system/airstatus.service` (as root) containing:
 ```
 [Unit]
-Description=AirPods Battery Monitor
+Description=Airpods Battery Monitor
 
 [Service]
-ExecStart=/usr/bin/python3 /PATH/TO/AirStatus/main.py /tmp/airstatus.out
+ExecStart=/usr/bin/python3 /PATH/TO/AirStatus/main.py
 Restart=always
 RestartSec=3
 
@@ -43,11 +44,5 @@ Enable service on boot:
  ```
 sudo systemctl enable airstatus
 ```
-
-#### Can I customize it easily?
-**Yes, you can!**
-
-You can change the **update frequency** within the main.py file
-
 #### Used materials
 * Some code from [this repo](https://github.com/ohanedan/Airpods-Windows-Service)
