@@ -168,7 +168,7 @@ def run() -> None:
         while True:
             data = get_data()
 
-            if data["status"] == 1:
+            if data["status"] == 1 and data["model"] != "unknown":
                 json_data = dumps(data)
                 with open(output_file, "w") as f:
                     f.write(json_data + "\n")
