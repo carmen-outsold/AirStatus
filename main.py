@@ -158,7 +158,8 @@ def is_flipped(raw: bytes) -> bool:
 
 
 def run() -> None:
-    output_file = f"{getenv('HOME')}/.var/airstatus/out.json"
+    output_dir = f"{getenv('HOME')}/.var/airstatus"
+    output_file = f"{output_dir}/out.json"
 
     try:
         while True:
