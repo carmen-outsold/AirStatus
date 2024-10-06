@@ -2,24 +2,23 @@
 #### Check your AirPods battery level on Linux
 
 #### What is it?
-This is a Python script, forked from [faglo/AirStatus](https://github.com/faglo/AirStatus) that reads your airpods' battery levels and writes into a JSON file.
+This is a Python program, forked from [faglo/AirStatus](https://github.com/faglo/AirStatus) that reads your AirPods' battery levels and writes them into a JSON file.
 
 ### Installation
-Clone the repository.
-```
-git clone https://github.com/carmen-outsold/AirStatus.git
-```
-Change directory.
+#### Clone the repository.
 
-```
-cd AirStatus
-```
+`git clone https://github.com/carmen-outsold/AirStatus.git`
 
-Run the `install.sh` script.
-```
-chmod +x install.sh
-./install.sh
-```
+#### Change directory.
+
+`cd AirStatus`
+
+#### Make the `install.sh` script executable.
+`chmod +x install.sh`
+
+#### Run the script.
+
+`./install.sh`
 
 ### Systemd service
 
@@ -30,7 +29,7 @@ sudo systemctl enable --now airstatus
 
 ### Usage
 
-The script will be automatically ran by the service. Output will be stored in `out.json` located at `$HOME/.var/airstatus`.
+The script will be automatically run by the service. Output will be stored in `out.json` located at `$HOME/.var/airstatus`.
 
 #### Example output
 
