@@ -4,7 +4,7 @@ from time import sleep
 from binascii import hexlify
 from json import dumps
 from datetime import datetime
-from os import getenv
+from os import makedirs, path, getenv
 import asyncio
 from typing import Dict, Any, Optional
 
@@ -161,13 +161,16 @@ def run() -> None:
     output_dir = f"{getenv('HOME')}/.var/airstatus"
     output_file = f"{output_dir}/out.json"
 
+    if not path.exists(output_dir):
+        makedirs(output_dir)
+
     try:
         while True:
             data = get_data()
 
             if data["status"] == 1:
                 json_data = dumps(data)
-                with open(output_file, "a") as f:
+                with open(output_file, "w") as f:
                     f.write(json_data + "\n")
 
             sleep(UPDATE_DURATION)
