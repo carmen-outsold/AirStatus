@@ -100,18 +100,22 @@ def get_data() -> Dict[str, Any]:
     flip: bool = is_flipped(raw)
 
     # On 7th position we can get AirPods model, gen1, gen2, Pro or Max
-    if chr(raw[7]) == "e":
-        model = "AirPodsPro"
-    elif chr(raw[7]) == "3":
-        model = "AirPods3"
+    if chr(raw[7]) == "2":
+        model = "AirPods1"
     elif chr(raw[7]) == "f":
         model = "AirPods2"
-    elif chr(raw[7]) == "2":
-        model = "AirPods1"
-    elif chr(raw[7]) == "a":
-        model = "AirPodsMax"
+    elif chr(raw[7]) == "3":
+        model = "AirPods3"
+    elif chr(raw[7]) == "9":
+        model = "AirPods4"
+    elif chr(raw[7]) == "b":
+        model = "AirPods4ANC"
+    elif chr(raw[7]) == "e":
+        model = "AirPodsPro"
     elif chr(raw[7]) == "4":
         model = "AirPodsPro2"
+    elif chr(raw[7]) == "a":
+        model = "AirPodsMax"
     else:
         model = "unknown"
 
